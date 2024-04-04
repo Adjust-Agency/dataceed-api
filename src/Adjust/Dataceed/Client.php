@@ -60,7 +60,17 @@ class Client
 
 		if ($statusCode >= 400) {
 			// Handle HTTP errors
-			throw new \Exception("HTTP Error: Received status code $statusCode");
+			
+			switch(true) {
+				
+				case !empty($response):
+					
+					$response = json_decode($response, true);
+					throw new \Exception( get_class() . " Error $statusCode : " . $response['message'], $response['code']);
+					
+				default:
+					throw new \Exception("HTTP Error: Received status code $statusCode");
+			}
 		}
 
 		return json_decode($response, true);
